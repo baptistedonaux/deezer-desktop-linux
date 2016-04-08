@@ -71,8 +71,13 @@ const Player = function(mainWindow) {
 
     ipcMain.on('currentSong', function (event, value) {
         let artists = [];
-        for (var i = 0; i < value.ARTISTS.length; i++) {
-            artists[artists.length] = value.ARTISTS[i].ART_NAME;
+
+        if (value.ART_NAME !== undefined) {
+            artists[artists.length] = value.ART_NAME;
+        } else if (value.ARTISTS !== undefined) {
+            for (var i = 0; i < value.ARTISTS.length; i++) {
+                artists[artists.length] = value.ARTISTS[i].ART_NAME;
+            }
         }
 
         player.metadata = {

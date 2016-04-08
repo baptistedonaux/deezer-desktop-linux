@@ -31,6 +31,7 @@ function create() {
     mainWindow = new electron.BrowserWindow({
         width: 1920,
         height: 1080,
+        icon: proc.cwd() + "/resources/dz-client-linux-x128.png",
         "web-preferences": {
             'plugins': true
         }
