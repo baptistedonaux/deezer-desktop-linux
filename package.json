@@ -7,13 +7,13 @@
   "main": "src/main.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/electron/electron-quick-start.git"
+    "url": "git+https://github.com/baptistedonaux/deezer-desktop-linux.git"
   },
   "keywords": [
     "deezer"
   ],
   "bugs": {
-    "url": "https://github.com/electron/electron-quick-start/issues"
+    "url": "https://github.com/baptistedonaux/deezer-desktop-linux/issues"
   },
   "dependencies": {
     "mpris-service": "^1.1.1"
