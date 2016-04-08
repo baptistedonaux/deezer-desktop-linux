@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+  build:
+    build: .
+    volumes:
+      - ..:/data
+    working_dir: /data
+    command: npm run pepper

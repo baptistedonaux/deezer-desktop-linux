@@ -1,0 +1,28 @@
+{
+  "name": "deezer-desktop-for-linux",
+  "description": "A minimal Deezer integration for Linux",
+  "version": "0.0.1",
+  "author": "Baptiste Donaux",
+  "license": "MIT",
+  "main": "src/main.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/electron/electron-quick-start.git"
+  },
+  "keywords": [
+    "deezer"
+  ],
+  "bugs": {
+    "url": "https://github.com/electron/electron-quick-start/issues"
+  },
+  "dependencies": {
+    "mpris-service": "^1.1.1"
+  },
+  "devDependencies": {
+    "electron-prebuilt": "^0.36.0"
+  },
+  "scripts": {
+    "pepper": "rm -rf /data/plugins && mkdir /data/plugins && ./extract-linux-pepperflash.sh && cd /opt/google/chrome/PepperFlash && mv libpepflashplayer.so /data/plugins/ && mv manifest.json /data/plugins/",
+    "start": "electron src/main.js"
+  }
+}
