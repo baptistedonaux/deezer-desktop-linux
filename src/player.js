@@ -3,8 +3,10 @@
 const ipcMain = require('electron').ipcMain;
 const mpris = require("mpris-service");
 
+let player;
+
 const Player = function(mainWindow) {
-	let player = mpris({
+	player = mpris({
         name: 'deezerdesktopforlinux',
         identity: 'Deezer desktop for Linux',
         supportedInterfaces: ['player'],
