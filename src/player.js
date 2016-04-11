@@ -83,6 +83,7 @@ const Player = function(mainWindow) {
         }
 
         player.metadata = {
+            'mpris:trackid': value.SNG_ID,
             'mpris:artUrl': 'http://cdn-images.deezer.com/images/cover/' + value.ALB_PICTURE + '/125x125.jpg',
             'mpris:length': value.DURATION * 1000000, // In microseconds 
             'xesam:album': value.ALB_TITLE,
@@ -133,6 +134,10 @@ const Player = function(mainWindow) {
         player.canGoPrevious = value !== null;
     });
 
+    ipcMain.on('position', function (event, value) {
+        player.interfaces.player.emitSignal('Seeked', value  * 1000000);
+    });
+
 	setInterval(updateCallback, 3000);
 };
 
@@ -158,6 +163,7 @@ Player.prototype.updateMetadata = function(mainWindow) {
         ipcRenderer.send('volume', dzPlayer.volume);
         ipcRenderer.send('nextSong', dzPlayer.getNextSong());
         ipcRenderer.send('previousSong', dzPlayer.getPrevSong());
+        ipcRenderer.send('position', dzPlayer.getPosition());
         `);
 }
 
