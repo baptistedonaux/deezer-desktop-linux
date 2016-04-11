@@ -83,11 +83,12 @@ const Player = function(mainWindow) {
         }
 
         player.metadata = {
-            'mpris:length': value.DURATION * 1000000, // In microseconds 
             'mpris:artUrl': 'http://cdn-images.deezer.com/images/cover/' + value.ALB_PICTURE + '/125x125.jpg',
-            'xesam:title': value.SNG_TITLE,
+            'mpris:length': value.DURATION * 1000000, // In microseconds 
             'xesam:album': value.ALB_TITLE,
+            'xesam:albumArtist': value.ART_NAME,
             'xesam:artist': artists.join(", "),
+            'xesam:title': value.SNG_TITLE
         };
     });
 
