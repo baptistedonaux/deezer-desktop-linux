@@ -79,7 +79,7 @@ const Player = function(mainWindow, configPath) {
     });
 
     ipcMain.on('currentSong', function (event, value) {
-        if (value === null) {
+        if (value === null && player.metadata == {}) {
             player.metadata = {};
         } else if (value.SNG_ID !== currentSong) {
             currentSong = value.SNG_ID;
