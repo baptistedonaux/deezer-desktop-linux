@@ -1,11 +1,17 @@
 "use strict";
 
+const fs = require("fs");
+const http = require("http");
 const ipcMain = require('electron').ipcMain;
 const mpris = require("mpris-service");
 
 let player;
+let config;
 
-const Player = function(mainWindow) {
+const Player = function(mainWindow, configPath) {
+    config = {
+        path: configPath,
+    };
 	player = mpris({
         name: 'deezerdesktopforlinux',
         identity: 'Deezer desktop for Linux',
@@ -85,9 +91,25 @@ const Player = function(mainWindow) {
                 }
             }
 
+            let coverPath = config.path + "/" + value.ALB_PICTURE + '.jpg';
+
+            try {
+                fs.statSync(coverPath);
+            } catch (error) {
+                http.get('http://cdn-images.deezer.com/images/cover/' + value.ALB_PICTURE + '/125x125.jpg', function (response) {
+                    response.on('data', function (chunk) {
+                        fs.writeFile(coverPath, chunk, function (err) {
+                            if (err) {
+                                throw err;
+                            }
+                        });
+                    });
+                });
+            }
+
             player.metadata = {
                 'mpris:trackid': value.SNG_ID,
-                'mpris:artUrl': 'http://cdn-images.deezer.com/images/cover/' + value.ALB_PICTURE + '/125x125.jpg',
+                'mpris:artUrl': coverPath,
                 'mpris:length': value.DURATION * 1000000, // In microseconds 
                 'xesam:album': value.ALB_TITLE,
                 'xesam:albumArtist': value.ART_NAME,
