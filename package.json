@@ -5,9 +5,9 @@
     "electron-prebuilt": "^0.36.0"
   },
   "scripts": {
-    "build": "electron-packager ./src/ deezer-desktop-linux --platform=linux --arch=all --overwrite",
+    "build": "electron-packager ./app/ deezer-desktop-linux --platform=linux --arch=all --overwrite",
     "dist": "build",
-    "pepper": "rm -rf /data/src/plugins && mkdir /data/src/plugins && ./extract-linux-pepperflash.sh && cd /opt/google/chrome/PepperFlash && mv libpepflashplayer.so /data/src/plugins/ && mv manifest.json /data/src/plugins/",
+    "pepper": "rm -rf /data/app/plugins && mkdir /data/app/plugins && ./extract-linux-pepperflash.sh && cd /opt/google/chrome/PepperFlash && mv libpepflashplayer.so /data/app/plugins/ && mv manifest.json /data/app/plugins/",
     "start": "electron app/main.js"
   },
   "build": {
