@@ -7,7 +7,7 @@ const mpris = require("mpris-service");
 
 let player;
 let config;
-let currentSong;
+let context = {};
 
 const Player = function(mainWindow, configPath) {
     config = {
@@ -24,65 +24,65 @@ const Player = function(mainWindow, configPath) {
 		canControl: false,
     });
 
-    var updateCallback = this.updateMetadata.bind(player, mainWindow);
+    var update = this.update.bind(player, mainWindow);
 
     // Events
     player.on('play', function () {
         mainWindow.webContents.executeJavaScript('dzPlayer.control.play();');
-        updateCallback();
+        update();
     });
 
     player.on('pause', function () {
         mainWindow.webContents.executeJavaScript('dzPlayer.control.pause();');
-        updateCallback();
+        update();
     });
 
     player.on('playpause', function () {
         mainWindow.webContents.executeJavaScript('dzPlayer.control.togglePause();');
-        updateCallback();
+        update();
     });
 
     player.on('previous', function () {
         mainWindow.webContents.executeJavaScript('dzPlayer.playTrackAtIndex(dzPlayer.getIndexSong() - 1);');
-        updateCallback();
+        update();
     });
 
     player.on('next', function () {
         mainWindow.webContents.executeJavaScript('dzPlayer.playTrackAtIndex(dzPlayer.getIndexSong() + 1);');
-        updateCallback();
+        update();
     });
 
     // player.on('seek', function (event, value) {
     //   // missing coef
     //   console.log(value);
     //   mainWindow.webContents.executeJavaScript('dzPlayer.control.seek(0..1);');
-    //   updateCallback();
+    //   update();
     // });
 
     // player.on('position', function (event, value) {
     //   // missing coef
     //   console.log(value);
     //   mainWindow.webContents.executeJavaScript('dzPlayer.position;');
-    //   updateCallback();
+    //   update();
     // });
 
-    player.on('shuffle', function () {
-	    // missing value
-	    mainWindow.webContents.executeJavaScript('dzPlayer.control.shuffle(true|false);');
-	    updateCallback();
-    });
+    // player.on('shuffle', function () {
+	   //  // missing value
+	   //  mainWindow.webContents.executeJavaScript('dzPlayer.control.shuffle(true|false);');
+	   //  update();
+    // });
 
-    player.on('volume', function () {
-        // missing value
-        mainWindow.webContents.executeJavaScript('dzPlayer.control.setVolume(0..1);');
-        updateCallback();
-    });
+    // player.on('volume', function () {
+    //     // missing value
+    //     mainWindow.webContents.executeJavaScript('dzPlayer.control.setVolume(0..1);');
+    //     update();
+    // });
 
     ipcMain.on('currentSong', function (event, value) {
         if (value === null && player.metadata == {}) {
             player.metadata = {};
-        } else if (value.SNG_ID !== currentSong) {
-            currentSong = value.SNG_ID;
+        } else if (context.song === undefined || value.SNG_ID !== context.song) {
+            context.song = value.SNG_ID;
 
             let artists = [];
 
@@ -123,54 +123,72 @@ const Player = function(mainWindow, configPath) {
     });
 
     ipcMain.on('isShuffle', function (event, value) {
-        player.shuffle = value;
+        if (context.shuffle === undefined || context.shuffle !== value) {
+            context.shuffle = value;
+            player.shuffle = value;
+        }
     });
 
     ipcMain.on('playbackStatus', function (event, value) {
-        player.playbackStatus = value;
+        if (context.playbackStatus === undefined || context.playbackStatus !== value) {
+            context.playbackStatus = value;
+            player.playbackStatus = value;
 
-        if (value == "Stopped") {
-            player.canPlay = true;
-            player.canPause = false;
-        } else if (value == "Paused") {
-            player.canPlay = true;
-            player.canPause = false;
-        } else if (value == "Playing") {
-            player.canPlay = false;
-            player.canPause = true;
+            if (value == "Stopped") {
+                player.canPlay = true;
+                player.canPause = false;
+            } else if (value == "Paused") {
+                player.canPlay = true;
+                player.canPause = false;
+            } else if (value == "Playing") {
+                player.canPlay = false;
+                player.canPause = true;
+            }
         }
     });
 
     ipcMain.on('repeatMode', function (event, value) {
-        if (value === 0) {
-            player.loopStatus = "None";
-        } else if (value === 1) {
-            player.loopStatus = "Playlist";
-        } else if (value === 2) {
-            player.loopStatus = "Track";
+        if (context.repeatMode === undefined || context.repeatMode !== value) {
+            context.repeatMode = value;
+            if (value === 0) {
+                player.loopStatus = "None";
+            } else if (value === 1) {
+                player.loopStatus = "Playlist";
+            } else if (value === 2) {
+                player.loopStatus = "Track";
+            }
         }
     });
 
     ipcMain.on('volume', function (event, value) {
-        player.volume = value;
+        if (context.volume === undefined || context.volume !== value) {
+            context.volume = value;
+            player.volume = value;
+        }
     });
 
     ipcMain.on('nextSong', function (event, value) {
-        player.canGoNext = value !== null;
+        if (context.nextSong === undefined || context.nextSong !== value) {
+            context.nextSong = value;
+            player.canGoNext = value !== null;
+        }
     });
 
     ipcMain.on('previousSong', function (event, value) {
-        player.canGoPrevious = value !== null;
+        if (context.previousSong === undefined || context.previousSong !== value) {
+            context.previousSong = value;
+            player.canGoPrevious = value !== null;
+        }
     });
 
     ipcMain.on('position', function (event, value) {
         player.interfaces.player.emitSignal('Seeked', value  * 1000000);
     });
 
-	setInterval(updateCallback, 3000);
+	setInterval(update, 1000);
 };
 
-Player.prototype.updateMetadata = function(mainWindow) {
+Player.prototype.update = function(mainWindow) {
     mainWindow.webContents.executeJavaScript(`
         var ipcRenderer = require('electron').ipcRenderer;
 
