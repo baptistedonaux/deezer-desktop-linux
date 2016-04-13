@@ -19,6 +19,7 @@
     "mpris-service": "^1.1.1"
   },
   "devDependencies": {
+    "electron-packager": "^6.0.2",
     "electron-prebuilt": "^0.36.0"
   },
   "scripts": {

@@ -83,9 +83,15 @@ const Player = function(mainWindow, configPath) {
             let value = values[prop];
 
             if (prop == "currentSong") {
-                if (value === null) {
+                if (context.song === undefined) {
+                    context.song = null;
                     player.metadata = {};
-                } else if (context.song === undefined || value.SNG_ID !== context.song) {
+                }
+
+                if (value === null && context.song !== null) {
+                    context.song = null;
+                    player.metadata = {};
+                } else if (value.SNG_ID !== undefined && value.SNG_ID !== context.song) {
                     context.song = value.SNG_ID;
 
                     let artists = [];
