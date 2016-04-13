@@ -158,6 +158,7 @@ const Player = function(mainWindow, configPath) {
             } else if (prop == "position") {
                 player.interfaces.player.emitSignal('Seeked', value  * 1000000);
             } else if (prop == "playbackStatus") {
+                // Compare two objects with JSON serialization -- See http://stackoverflow.com/a/1144249/2182996
                 if (context.playbackStatus === undefined || JSON.stringify(context.playbackStatus) != JSON.stringify(value)) {
                     context.playbackStatus = value;
 
