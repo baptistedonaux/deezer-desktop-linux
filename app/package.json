@@ -2,7 +2,10 @@
   "name": "deezer-desktop-for-linux",
   "description": "A minimal Deezer integration for Linux",
   "version": "0.0.1",
-  "author": "Baptiste Donaux",
+  "author": {
+    "name": "Baptiste Donaux",
+    "email": "baptiste.donaux@gmail.com"
+  },
   "license": "MIT",
   "main": "main.js",
   "repository": {

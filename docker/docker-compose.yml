@@ -14,3 +14,10 @@ services:
       - ..:/data
     working_dir: /data
     command: npm run build
+
+  dist:
+    image: node:5
+    volumes:
+      - ..:/data
+    working_dir: /data
+    command: npm run dist

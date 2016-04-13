@@ -1,11 +1,17 @@
 {
   "devDependencies": {
+    "electron-builder": "^3.5.0",
     "electron-packager": "^6.0.2",
     "electron-prebuilt": "^0.36.0"
   },
   "scripts": {
     "build": "electron-packager ./src/ deezer-desktop-linux --platform=linux --arch=all --overwrite",
+    "dist": "build",
     "pepper": "rm -rf /data/src/plugins && mkdir /data/src/plugins && ./extract-linux-pepperflash.sh && cd /opt/google/chrome/PepperFlash && mv libpepflashplayer.so /data/src/plugins/ && mv manifest.json /data/src/plugins/",
-    "start": "electron src/main.js"
+    "start": "electron app/main.js"
+  },
+  "build": {
+    "app-bundle-id": "1",
+    "app-category-type": "public.app-category.developer-tools"
   }
 }

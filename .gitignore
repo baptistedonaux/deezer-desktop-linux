@@ -1,5 +1,7 @@
 *-ia32
 *-x64
 *.log
+build
+dist
 node_modules
 plugins
