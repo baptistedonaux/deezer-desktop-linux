@@ -1,3 +1,5 @@
-node_modules
+*-ia32
+*-x64
 *.log
+node_modules
 plugins

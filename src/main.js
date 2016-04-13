@@ -3,6 +3,7 @@
 const electron = require('electron');
 const app = electron.app;
 const fs = require('fs');
+const path = require("path");
 const Player = require("./player.js");
 const proc = require("process");
 
@@ -16,8 +17,8 @@ try {
     fs.mkdirSync(configPath, 755);
 }
 
-app.commandLine.appendSwitch('ppapi-flash-path', proc.cwd() + '/plugins/libpepflashplayer.so');
-app.commandLine.appendSwitch('ppapi-flash-version', JSON.parse(require("fs").readFileSync(proc.cwd() + "/plugins/manifest.json").toString()).version);
+app.commandLine.appendSwitch('ppapi-flash-path', path.resolve(__dirname, 'plugins/libpepflashplayer.so'));
+app.commandLine.appendSwitch('ppapi-flash-version', JSON.parse(require("fs").readFileSync(path.resolve(__dirname, "plugins/manifest.json")).toString()).version);
 
 app.on('ready', create);
 app.on('ready', function() {
@@ -38,7 +39,7 @@ app.on('activate', function () {
 
 function create() {
     mainWindow = new electron.BrowserWindow({
-        icon: proc.cwd() + "/resources/dz-client-linux-x128.png",
+        icon: path.resolve(__dirname, "resources/dz-client-linux-x128.png"),
         "web-preferences": {
             'plugins': true
         }

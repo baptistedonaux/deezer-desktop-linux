@@ -1,9 +1,16 @@
 version: '2'
 
 services:
-  build:
+  pepper:
     build: .
     volumes:
       - ..:/data
     working_dir: /data
     command: npm run pepper
+
+  build:
+    image: node:5
+    volumes:
+      - ..:/data
+    working_dir: /data
+    command: npm run build
