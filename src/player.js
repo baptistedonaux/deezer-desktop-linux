@@ -7,6 +7,7 @@ const mpris = require("mpris-service");
 
 let player;
 let config;
+let currentSong;
 
 const Player = function(mainWindow, configPath) {
     config = {
@@ -80,7 +81,9 @@ const Player = function(mainWindow, configPath) {
     ipcMain.on('currentSong', function (event, value) {
         if (value === null) {
             player.metadata = {};
-        } else {
+        } else if (value.SNG_ID !== currentSong) {
+            currentSong = value.SNG_ID;
+
             let artists = [];
 
             if (value.ART_NAME !== undefined) {
