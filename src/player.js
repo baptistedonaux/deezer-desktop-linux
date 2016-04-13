@@ -91,7 +91,7 @@ const Player = function(mainWindow, configPath) {
                 if (value === null && context.song !== null) {
                     context.song = null;
                     player.metadata = {};
-                } else if (value.SNG_ID !== undefined && value.SNG_ID !== context.song) {
+                } else if (value !== null && value.SNG_ID !== undefined && value.SNG_ID !== context.song) {
                     context.song = value.SNG_ID;
 
                     let artists = [];
