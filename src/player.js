@@ -72,25 +72,29 @@ const Player = function(mainWindow) {
     });
 
     ipcMain.on('currentSong', function (event, value) {
-        let artists = [];
+        if (value === null) {
+            player.metadata = {};
+        } else {
+            let artists = [];
 
-        if (value.ART_NAME !== undefined) {
-            artists[artists.length] = value.ART_NAME;
-        } else if (value.ARTISTS !== undefined) {
-            for (var i = 0; i < value.ARTISTS.length; i++) {
-                artists[artists.length] = value.ARTISTS[i].ART_NAME;
+            if (value.ART_NAME !== undefined) {
+                artists[artists.length] = value.ART_NAME;
+            } else if (value.ARTISTS !== undefined) {
+                for (var i = 0; i < value.ARTISTS.length; i++) {
+                    artists[artists.length] = value.ARTISTS[i].ART_NAME;
+                }
             }
-        }
 
-        player.metadata = {
-            'mpris:trackid': value.SNG_ID,
-            'mpris:artUrl': 'http://cdn-images.deezer.com/images/cover/' + value.ALB_PICTURE + '/125x125.jpg',
-            'mpris:length': value.DURATION * 1000000, // In microseconds 
-            'xesam:album': value.ALB_TITLE,
-            'xesam:albumArtist': value.ART_NAME,
-            'xesam:artist': artists.join(", "),
-            'xesam:title': value.SNG_TITLE
-        };
+            player.metadata = {
+                'mpris:trackid': value.SNG_ID,
+                'mpris:artUrl': 'http://cdn-images.deezer.com/images/cover/' + value.ALB_PICTURE + '/125x125.jpg',
+                'mpris:length': value.DURATION * 1000000, // In microseconds 
+                'xesam:album': value.ALB_TITLE,
+                'xesam:albumArtist': value.ART_NAME,
+                'xesam:artist': artists.join(", "),
+                'xesam:title': value.SNG_TITLE
+            };
+        }
     });
 
     ipcMain.on('isShuffle', function (event, value) {
