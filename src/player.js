@@ -78,111 +78,107 @@ const Player = function(mainWindow, configPath) {
     //     update();
     // });
 
-    ipcMain.on('currentSong', function (event, value) {
-        if (value === null && player.metadata == {}) {
-            player.metadata = {};
-        } else if (context.song === undefined || value.SNG_ID !== context.song) {
-            context.song = value.SNG_ID;
+    ipcMain.on('context', function (event, values) {
+        for (let prop in values) {
+            let value = values[prop];
 
-            let artists = [];
+            if (prop == "currentSong") {
+                if (value === null) {
+                    player.metadata = {};
+                } else if (context.song === undefined || value.SNG_ID !== context.song) {
+                    context.song = value.SNG_ID;
 
-            if (value.ART_NAME !== undefined) {
-                artists[artists.length] = value.ART_NAME;
-            } else if (value.ARTISTS !== undefined) {
-                for (var i = 0; i < value.ARTISTS.length; i++) {
-                    artists[artists.length] = value.ARTISTS[i].ART_NAME;
+                    let artists = [];
+
+                    if (value.ART_NAME !== undefined) {
+                        artists[artists.length] = value.ART_NAME;
+                    } else if (value.ARTISTS !== undefined) {
+                        for (var i = 0; i < value.ARTISTS.length; i++) {
+                            artists[artists.length] = value.ARTISTS[i].ART_NAME;
+                        }
+                    }
+
+                    let coverPath = config.path + "/" + value.ALB_PICTURE + '.jpg';
+
+                    try {
+                        fs.statSync(coverPath);
+                    } catch (error) {
+                        http.get('http://cdn-images.deezer.com/images/cover/' + value.ALB_PICTURE + '/125x125.jpg', function (response) {
+                            response.on('data', function (chunk) {
+                                fs.writeFile(coverPath, chunk, function (err) {
+                                    if (err) {
+                                        throw err;
+                                    }
+                                });
+                            });
+                        });
+                    }
+
+                    player.metadata = {
+                        'mpris:trackid': value.SNG_ID,
+                        'mpris:artUrl': coverPath,
+                        'mpris:length': value.DURATION * 1000000, // In microseconds 
+                        'xesam:album': value.ALB_TITLE,
+                        'xesam:albumArtist': value.ART_NAME,
+                        'xesam:artist': artists.join(", "),
+                        'xesam:title': value.SNG_TITLE
+                    };
+                }
+            } else if (prop == "isShuffle") {
+                if (context.shuffle === undefined || context.shuffle !== value) {
+                    context.shuffle = value;
+                    player.shuffle = value;
+                }
+            } else if (prop == "repeatMode") {
+                if (context.repeatMode === undefined || context.repeatMode !== value) {
+                    context.repeatMode = value;
+                    if (value === 0) {
+                        player.loopStatus = "None";
+                    } else if (value === 1) {
+                        player.loopStatus = "Playlist";
+                    } else if (value === 2) {
+                        player.loopStatus = "Track";
+                    }
+                }
+            } else if (prop == "volume") {
+                if (context.volume === undefined || context.volume !== value) {
+                    context.volume = value;
+                    player.volume = value;
+                }
+            } else if (prop == "nextSong") {
+                if (context.nextSong === undefined || context.nextSong !== value) {
+                    context.nextSong = value;
+                    player.canGoNext = value !== null;
+                }
+            } else if (prop == "previousSong") {
+                if (context.previousSong === undefined || context.previousSong !== value) {
+                    context.previousSong = value;
+                    player.canGoPrevious = value !== null;
+                }
+            } else if (prop == "position") {
+                player.interfaces.player.emitSignal('Seeked', value  * 1000000);
+            } else if (prop == "playbackStatus") {
+                if (context.playbackStatus === undefined || JSON.stringify(context.playbackStatus) != JSON.stringify(value)) {
+                    context.playbackStatus = value;
+
+                    let status;
+                    if (value.isPaused === true) {
+                        player.canPause = false;
+                        player.canPlay = true;
+                        status = "Paused";
+                    } else if (value.isPlaying === true) {
+                        player.canPause = true;
+                        player.canPlay = false;
+                        status = "Playing";
+                    } else {
+                        player.canPause = false;
+                        player.canPlay = true;
+                        status = 'Stopped';
+                    }
+                    player.playbackStatus = status;
                 }
             }
-
-            let coverPath = config.path + "/" + value.ALB_PICTURE + '.jpg';
-
-            try {
-                fs.statSync(coverPath);
-            } catch (error) {
-                http.get('http://cdn-images.deezer.com/images/cover/' + value.ALB_PICTURE + '/125x125.jpg', function (response) {
-                    response.on('data', function (chunk) {
-                        fs.writeFile(coverPath, chunk, function (err) {
-                            if (err) {
-                                throw err;
-                            }
-                        });
-                    });
-                });
-            }
-
-            player.metadata = {
-                'mpris:trackid': value.SNG_ID,
-                'mpris:artUrl': coverPath,
-                'mpris:length': value.DURATION * 1000000, // In microseconds 
-                'xesam:album': value.ALB_TITLE,
-                'xesam:albumArtist': value.ART_NAME,
-                'xesam:artist': artists.join(", "),
-                'xesam:title': value.SNG_TITLE
-            };
         }
-    });
-
-    ipcMain.on('isShuffle', function (event, value) {
-        if (context.shuffle === undefined || context.shuffle !== value) {
-            context.shuffle = value;
-            player.shuffle = value;
-        }
-    });
-
-    ipcMain.on('playbackStatus', function (event, value) {
-        if (context.playbackStatus === undefined || context.playbackStatus !== value) {
-            context.playbackStatus = value;
-            player.playbackStatus = value;
-
-            if (value == "Stopped") {
-                player.canPlay = true;
-                player.canPause = false;
-            } else if (value == "Paused") {
-                player.canPlay = true;
-                player.canPause = false;
-            } else if (value == "Playing") {
-                player.canPlay = false;
-                player.canPause = true;
-            }
-        }
-    });
-
-    ipcMain.on('repeatMode', function (event, value) {
-        if (context.repeatMode === undefined || context.repeatMode !== value) {
-            context.repeatMode = value;
-            if (value === 0) {
-                player.loopStatus = "None";
-            } else if (value === 1) {
-                player.loopStatus = "Playlist";
-            } else if (value === 2) {
-                player.loopStatus = "Track";
-            }
-        }
-    });
-
-    ipcMain.on('volume', function (event, value) {
-        if (context.volume === undefined || context.volume !== value) {
-            context.volume = value;
-            player.volume = value;
-        }
-    });
-
-    ipcMain.on('nextSong', function (event, value) {
-        if (context.nextSong === undefined || context.nextSong !== value) {
-            context.nextSong = value;
-            player.canGoNext = value !== null;
-        }
-    });
-
-    ipcMain.on('previousSong', function (event, value) {
-        if (context.previousSong === undefined || context.previousSong !== value) {
-            context.previousSong = value;
-            player.canGoPrevious = value !== null;
-        }
-    });
-
-    ipcMain.on('position', function (event, value) {
-        player.interfaces.player.emitSignal('Seeked', value  * 1000000);
     });
 
 	setInterval(update, 1000);
@@ -190,28 +186,20 @@ const Player = function(mainWindow, configPath) {
 
 Player.prototype.update = function(mainWindow) {
     mainWindow.webContents.executeJavaScript(`
-        var ipcRenderer = require('electron').ipcRenderer;
-
-        ipcRenderer.send('currentSong', dzPlayer.getCurrentSong());
-        ipcRenderer.send('isShuffle', dzPlayer.isShuffle());
-
-        var isPlaying = dzPlayer.isPlaying();
-        var isPaused = dzPlayer.isPaused();
-
-        var status = 'Stopped';
-        if (isPaused === true) {
-            status = "Paused";
-        } else if (isPlaying === true) {
-            status = "Playing";
-        }
-        ipcRenderer.send('playbackStatus', status);
-
-        ipcRenderer.send('repeatMode', dzPlayer.repeat);
-        ipcRenderer.send('volume', dzPlayer.volume);
-        ipcRenderer.send('nextSong', dzPlayer.getNextSong());
-        ipcRenderer.send('previousSong', dzPlayer.getPrevSong());
-        ipcRenderer.send('position', dzPlayer.getPosition());
-        `);
+        require('electron').ipcRenderer.send("context", {
+            currentSong: dzPlayer.getCurrentSong(),
+            isShuffle: dzPlayer.isShuffle(),
+            nextSong: dzPlayer.getNextSong(),
+            playbackStatus: {
+                isPlaying: dzPlayer.isPlaying(),
+                isPaused: dzPlayer.isPaused(),
+            },
+            position: dzPlayer.getPosition(),
+            previousSong: dzPlayer.getPrevSong(),
+            repeatMode: dzPlayer.repeat,
+            volume: dzPlayer.volume,
+        });
+    `);
 }
 
 module.exports = Player;
