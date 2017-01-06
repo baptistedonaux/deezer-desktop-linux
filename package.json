@@ -1,8 +1,10 @@
 {
   "devDependencies": {
+    "dbus": "^0.2.20",
     "electron-builder": "^3.5.0",
     "electron-packager": "^6.0.2",
-    "electron-prebuilt": "^0.36.0"
+    "electron-prebuilt": "^0.36.0",
+    "mpris-service": "^1.1.1"
   },
   "scripts": {
     "build": "electron-packager ./app/ deezer-desktop-linux --platform=linux --arch=all --overwrite",
