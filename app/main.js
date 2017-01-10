@@ -39,7 +39,7 @@ app.on('activate', function () {
 
 function create() {
     mainWindow = new electron.BrowserWindow({
-        icon: path.resolve(__dirname, "resources/dz-client-linux-x128.png"),
+        "icon": path.resolve(__dirname, "resources/dz-client-linux-x128.png"),
         "web-preferences": {
             'plugins': true
         }
