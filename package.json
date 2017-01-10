@@ -9,7 +9,7 @@
   "scripts": {
     "build": "electron-packager ./app/ deezer-desktop-linux --platform=linux --arch=all --overwrite",
     "dist": "build",
-    "pepper": "rm -rf /data/app/plugins && mkdir /data/app/plugins && ./extract-linux-pepperflash.sh && cd /usr/lib/adobe-flashplugin/ && mv libpepflashplayer.so /data/app/plugins/ && mv manifest.json /data/app/plugins/",
+    "pepper": "rm -rf ./app/plugins && mkdir ./app/plugins && ./extract-linux-pepperflash.sh && mv /usr/lib/adobe-flashplugin/libpepflashplayer.so ./app/plugins/ && mv /usr/lib/adobe-flashplugin/manifest.json ./app/plugins/",
     "start": "electron app/main.js"
   },
   "build": {

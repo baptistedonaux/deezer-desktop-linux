@@ -9,14 +9,14 @@ services:
     command: npm run pepper
 
   build:
-    image: node:5
+    image: node:6
     volumes:
       - ..:/data
     working_dir: /data
     command: npm run build
 
   dist:
-    image: node:5
+    image: node:6
     volumes:
       - ..:/data
     working_dir: /data
