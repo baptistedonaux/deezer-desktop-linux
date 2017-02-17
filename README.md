@@ -1,8 +1,8 @@
 # Requirement
 
 * pepperflashplugin-nonfree
-> [Debian](https://wiki.debian.org/PepperFlashPlayer/Installing)
-> [Ubuntu](http://packages.ubuntu.com/fr/yakkety/pepperflashplugin-nonfree)
+  * [Debian](https://wiki.debian.org/PepperFlashPlayer/Installing)
+  * [Ubuntu](http://packages.ubuntu.com/fr/yakkety/pepperflashplugin-nonfree)
 
 # How to run
 
