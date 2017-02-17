@@ -2,6 +2,7 @@
   "devDependencies": {
     "dbus": "^1.0.0",
     "electron-builder": "^13.9.0",
+    "electron-installer-debian": "^0.4.0",
     "electron-packager": "^8.5.1",
     "electron-prebuilt": "^1.4.13",
     "mpris-service": "^1.1.1"
@@ -10,7 +11,8 @@
     "build": "electron-packager ./app/ deezer-desktop-linux --platform=linux --arch=x64 --overwrite",
     "dist": "build",
     "pepper": "rm -rf ./app/plugins && mkdir ./app/plugins && ./extract-linux-pepperflash.sh && mv /usr/lib/adobe-flashplugin/libpepflashplayer.so ./app/plugins/ && mv /usr/lib/adobe-flashplugin/manifest.json ./app/plugins/",
-    "start": "electron app/main.js"
+    "start": "electron app/main.js",
+    "deb64": "electron-installer-debian --src dist/linux-unpacked/ --dest dist/installers/ --arch amd64"
   },
   "build": {
     "app-bundle-id": "1",
