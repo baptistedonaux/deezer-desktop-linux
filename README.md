@@ -1,4 +1,4 @@
-NOTE: THIS APPLICATION IS NO LONGER MAINTAINED. You can use [MellowPlayer](https://colinduquesnoy.github.io/MellowPlayer/)
+# NOTE: THIS APPLICATION IS NO LONGER MAINTAINED. You can use [MellowPlayer](https://colinduquesnoy.github.io/MellowPlayer/)
 
 # Requirement
 
